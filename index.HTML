@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { background: #000; color: white; font-family: sans-serif; margin: 0; overflow: hidden; }
+        .race-container { display: flex; flex-direction: column; height: 100vh; justify-content: space-around; padding: 10px; }
+        
+        /* شكل المسار (الطريق) */
+        .lane { 
+            display: flex; 
+            align-items: center; 
+            background: linear-gradient(90deg, #222 0%, #333 50%, #222 100%); 
+            height: 14%; 
+            position: relative; 
+            border-bottom: 3px solid #444;
+            box-shadow: inset 0 0 10px #000;
+        }
+
+        .car-group { 
+            position: absolute; 
+            left: 0; 
+            display: flex; 
+            align-items: center; 
+            transition: 0.6s cubic-bezier(0.25, 0.1, 0.25, 1); 
+        }
+        
+        /* أيقونة السيارة */
+        .car-icon {
+            font-size: 50px; /* حجم السيارة */
+            margin-right: -20px;
+            filter: drop-shadow(0 0 5px red);
+            transform: scaleX(-1); /* لتعطي اتجاه الحركة لليمين */
+        }
+
+        .gift-img { width: 70px; height: 70px; z-index: 2; filter: drop-shadow(0 0 8px gold); }
+        .flag-img { width: 110px; height: 70px; border: 2px solid white; border-radius: 5px; margin-left: 10px; }
+        
+        .score { 
+            background: #ff0000; 
+            color: white; 
+            padding: 5px 12px; 
+            border-radius: 10px; 
+            font-weight: bold; 
+            font-size: 22px; 
+            margin-right: 15px;
+            box-shadow: 0 0 10px red;
+        }
+
+        .goal-line { position: absolute; right: 0; top:0; bottom:0; border-left: 10px dashed #ffff00; width: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="race-container">
+    <div class="lane"><div class="goal-line"></div><div id="lane-1" class="car-group"><span class="score" id="s1">0</span><img src="1000013990.png" class="gift-img"><span class="car-icon">🏎️</span><img src="https://flagcdn.com/dz.svg" class="flag-img"></div></div>
+    
+    <div class="lane"><div class="goal-line"></div><div id="lane-2" class="car-group"><span class="score" id="s2">0</span><img src="1000013993.png" class="gift-img"><span class="car-icon">🏎️</span><img src="https://flagcdn.com/ma.svg" class="flag-img"></div></div>
+    
+    <div class="lane"><div class="goal-line"></div><div id="lane-3" class="car-group"><span class="score" id="s3">0</span><img src="1000013984.png" class="gift-img"><span class="car-icon">🏎️</span><img src="https://flagcdn.com/tn.svg" class="flag-img"></div></div>
+    
+    <div class="lane"><div class="goal-line"></div><div id="lane-4" class="car-group"><span class="score" id="s4">0</span><img src="1000014018.png" class="gift-img"><span class="car-icon">🏎️</span><img src="https://flagcdn.com/eg.svg" class="flag-img"></div></div>
+    
+    <div class="lane"><div class="goal-line"></div><div id="lane-5" class="car-group"><span class="score" id="s5">0</span><img src="1000014009.png" class="gift-img"><span class="car-icon">🏎️</span><img src="https://flagcdn.com/ly.svg" class="flag-img"></div></div>
+    
+    <div class="lane"><div class="goal-line"></div><div id="lane-6" class="car-group"><span class="score" id="s6">0</span><img src="1000014007.png" class="gift-img"><span class="car-icon">🏎️</span><img src="https://flagcdn.com/qa.svg" class="flag-img"></div></div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    const maxPoints = 200;
+
+    socket.on('update', (data) => {
+        const el = document.getElementById('lane-' + data.id);
+        const scoreEl = document.getElementById('s' + data.id);
+        scoreEl.innerText = data.points;
+        let movePercent = (data.points / maxPoints) * 82; 
+        el.style.left = movePercent + "%";
+    });
+
+    socket.on('winner', (data) => {
+        alert("انتهى السباق بفوز: " + data.name);
+        location.reload();
+    });
+</script>
+</body>
+</html>
+
